@@ -9,9 +9,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// compile-time check
-var _ Querier = (*Client)(nil)
-
 // Client is a PostgreSQL client with optional master/replica routing.
 type Client struct {
 	master  *pgxpool.Pool
