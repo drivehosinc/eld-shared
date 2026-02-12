@@ -67,8 +67,12 @@ func (c *PoolConfig) dsn() string {
 		sslMode = "disable"
 	}
 
-	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		c.User, c.Password, host, port, c.DB, sslMode,
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		host,
+		port,
+		c.User,
+		c.Password,
+		c.DB,
+		c.SSLMode,
 	)
 }
