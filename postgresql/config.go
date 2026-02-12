@@ -35,6 +35,18 @@ func (c *PoolConfig) withDefaults() PoolConfig {
 		out.MaxConns = maxConn
 	}
 
+	if out.Host == "" {
+		out.Host = "localhost"
+	}
+
+	if out.Port == "" {
+		out.Port = "5432"
+	}
+
+	if c.SSLMode == "" {
+		c.SSLMode = "disable"
+	}
+
 	if out.MinConns == 0 {
 		out.MinConns = 2
 	}

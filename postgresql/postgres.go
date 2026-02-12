@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -42,11 +43,26 @@ func newPool(ctx context.Context, pc PoolConfig) (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("parse dsn: %w", err)
 	}
 
+	// Connection lifecycle callbacks
+	poolCfg.BeforeConnect = func(ctx context.Context, config *pgx.ConnConfig) error {
+		slog.Default().Info(fmt.Sprintf("Attempting to connect to database: %s", config.Database))
+		return nil
+	}
+
+	poolCfg.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+		slog.Default().Info(fmt.Sprintf("Successfully connected to %s database", conn.Config().Database))
+		return nil
+	}
+
+	poolCfg.BeforeClose = func(conn *pgx.Conn) {
+		slog.Default().Info(fmt.Sprintf("Disconnecting from %s database", conn.Config().Database))
+	}
+
 	poolCfg.MaxConns = pc.MaxConns
 	poolCfg.MinConns = pc.MinConns
 	poolCfg.MaxConnLifetime = pc.MaxConnLifetime
 	poolCfg.MaxConnIdleTime = pc.MaxConnIdleTime
-	
+
 	if poolCfg.ConnConfig.RuntimeParams == nil {
 		poolCfg.ConnConfig.RuntimeParams = make(map[string]string)
 	}
