@@ -84,8 +84,7 @@ func (c *PoolConfig) isValid() bool {
 		return false
 	}
 
-	return c != nil &&
-		c.Host != "" &&
+	return c.Host != "" &&
 		c.Port != "" &&
 		c.User != "" &&
 		c.Password != "" &&
