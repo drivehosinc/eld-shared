@@ -3,7 +3,6 @@ package postgresql
 import (
 	"context"
 	"fmt"
-	"log/slog"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -24,7 +23,7 @@ func New(ctx context.Context, cfg Config) (*Client, error) {
 	}
 
 	var replicaPool *pgxpool.Pool
-	if cfg.Replica != nil {
+	if cfg.Replica != nil && cfg.Replica.isValid() {
 		replicaPool, err = newPool(ctx, *cfg.Replica)
 		if err != nil {
 			masterPool.Close()
@@ -36,26 +35,11 @@ func New(ctx context.Context, cfg Config) (*Client, error) {
 }
 
 func newPool(ctx context.Context, pc PoolConfig) (*pgxpool.Pool, error) {
-	pc = pc.withDefaults()
+	pc.withDefaults()
 
 	poolCfg, err := pgxpool.ParseConfig(pc.dsn())
 	if err != nil {
 		return nil, fmt.Errorf("parse dsn: %w", err)
-	}
-
-	// Connection lifecycle callbacks
-	poolCfg.BeforeConnect = func(ctx context.Context, config *pgx.ConnConfig) error {
-		slog.Default().Info(fmt.Sprintf("Attempting to connect to database: %s", config.Database))
-		return nil
-	}
-
-	poolCfg.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
-		slog.Default().Info(fmt.Sprintf("Successfully connected to %s database", conn.Config().Database))
-		return nil
-	}
-
-	poolCfg.BeforeClose = func(conn *pgx.Conn) {
-		slog.Default().Info(fmt.Sprintf("Disconnecting from %s database", conn.Config().Database))
 	}
 
 	poolCfg.MaxConns = pc.MaxConns

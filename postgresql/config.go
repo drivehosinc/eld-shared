@@ -29,34 +29,36 @@ const (
 	maxConn = 20
 )
 
-func (c *PoolConfig) withDefaults() PoolConfig {
-	out := *c
-	if out.MaxConns == 0 {
-		out.MaxConns = maxConn
+func (c *PoolConfig) withDefaults() {
+	if c == nil {
+		return
 	}
 
-	if out.Host == "" {
-		out.Host = "localhost"
+	if c.MaxConns == 0 {
+		c.MaxConns = maxConn
 	}
 
-	if out.Port == "" {
-		out.Port = "5432"
+	if c.MinConns == 0 {
+		c.MinConns = 2
+	}
+	if c.MaxConnLifetime == 0 {
+		c.MaxConnLifetime = time.Hour
+	}
+	if c.MaxConnIdleTime == 0 {
+		c.MaxConnIdleTime = 30 * time.Minute
+	}
+
+	if c.Host == "" {
+		c.Host = "localhost"
+	}
+
+	if c.Port == "" {
+		c.Port = "5432"
 	}
 
 	if c.SSLMode == "" {
 		c.SSLMode = "disable"
 	}
-
-	if out.MinConns == 0 {
-		out.MinConns = 2
-	}
-	if out.MaxConnLifetime == 0 {
-		out.MaxConnLifetime = time.Hour
-	}
-	if out.MaxConnIdleTime == 0 {
-		out.MaxConnIdleTime = 30 * time.Minute
-	}
-	return out
 }
 
 // dsn returns the DSN string. If DSN is set explicitly, it is returned as-is.
@@ -66,25 +68,27 @@ func (c *PoolConfig) dsn() string {
 		return c.DSN
 	}
 
-	host := c.Host
-	if host == "" {
-		host = "localhost"
-	}
-	port := c.Port
-	if port == "" {
-		port = "5432"
-	}
-	sslMode := c.SSLMode
-	if sslMode == "" {
-		sslMode = "disable"
-	}
-
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		host,
-		port,
+		c.Host,
+		c.Port,
 		c.User,
 		c.Password,
 		c.DB,
 		c.SSLMode,
 	)
+}
+
+func (c *PoolConfig) isValid() bool {
+
+	if c == nil {
+		return false
+	}
+
+	return c != nil &&
+		c.Host != "" &&
+		c.Port != "" &&
+		c.User != "" &&
+		c.Password != "" &&
+		c.DB != "" &&
+		c.SSLMode != ""
 }
