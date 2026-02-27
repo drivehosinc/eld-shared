@@ -83,10 +83,10 @@ This module follows [Semantic Versioning](https://semver.org).
 
 | Version | Description |
 |---|---|
-| `v0.1.0` | Added `pdfgen` — PDF generation package |
+| `v1.3.4` | Added `pdfgen` — PDF generation package |
 
 To pin a specific version:
 
 ```bash
-go get github.com/drivehosinc/eld-shared@v0.1.0
+go get github.com/drivehosinc/eld-shared@v1.3.4
 ```
