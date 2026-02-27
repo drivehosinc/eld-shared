@@ -1,11 +1,11 @@
 # pdfgen — Release Notes
 
-## v0.1.0
+## v1.3.4
 
 ### Overview
 
 First release of `github.com/drivehosinc/eld-shared/pdfgen` — a structured
-PDF generation package for Lucid ELD business reports. Wraps
+PDF generation package for Drivehos business reports. Wraps
 [go-pdf/fpdf](https://github.com/go-pdf/fpdf) behind a component-based API
 so callers never touch the low-level PDF primitives directly.
 
