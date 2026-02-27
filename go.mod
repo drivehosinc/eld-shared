@@ -3,6 +3,7 @@ module github.com/drivehosinc/eld-shared
 go 1.24.5
 
 require (
+	github.com/go-pdf/fpdf v0.9.0
 	github.com/jackc/pgx/v5 v5.8.0
 	golang.org/x/crypto v0.42.0
 	google.golang.org/grpc v1.75.0
